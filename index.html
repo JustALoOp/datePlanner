@@ -258,6 +258,27 @@
             document.querySelector('form').style.display = 'none';
             document.getElementById('step-3').style.display = 'block';
             document.getElementById('summary-info').textContent = summaryInfo;
+
+            // Przygotowanie danych do wysłania
+            const formData = new FormData();
+            formData.append('Data_i_godzina', datetime);
+            formData.append('Aktywność', activity === 'Zaproponuj własne' ? customActivity : activity);
+
+            // Wysłanie formularza do Formspree za pomocą AJAX
+            fetch('https://formspree.io/f/meoonyvk', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Formularz został wysłany!');
+                } else {
+                    console.error('Wystąpił błąd przy wysyłaniu formularza');
+                }
+            })
+            .catch(error => {
+                console.error('Błąd wysyłania formularza', error);
+            });
         }
 
         // Funkcja do dodania do kalendarza
