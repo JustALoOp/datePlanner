@@ -259,7 +259,7 @@ function submitForm(event) {
     const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : '';
 
     // Podsumowanie
-    const summaryInfo = `Zaplanowałeś/aś randkę na ${datetime}, aktywność: ${activity === 'Zaproponuj własne' ? customActivity : activity}.`;
+    const summaryInfo = `Jesteśmy umówieni <b>${datetime}</b> na <b>${activity === 'Zaproponuj własne' ? customActivity : activity}</b>.`;
 
     // Ukrywanie formularza i pokazanie podsumowania
     document.getElementById('step-2').style.display = 'none';
