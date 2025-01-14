@@ -280,13 +280,13 @@
             })
             .then(response => {
                 if (response.ok) {
-                    alert('Formularz został pomyślnie wysłany!');
+                    console.log('Formularz został pomyślnie wysłany!');
                 } else {
-                    alert('Wystąpił problem podczas wysyłania formularza. Spróbuj ponownie.');
+                    console.log('Wystąpił problem podczas wysyłania formularza. Spróbuj ponownie.');
                 }
             })
             .catch(error => {
-                alert('Błąd podczas wysyłania formularza: ' + error.message);
+                console.log('Błąd podczas wysyłania formularza: ' + error.message);
             });
         }
 
