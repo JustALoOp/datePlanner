@@ -122,14 +122,14 @@
     <form id="appointmentForm" onsubmit="submitForm(event)">
         <!-- Krok 1: Wybór daty i godziny -->
         <div class="step active" id="step-1">
-            <label for="datetime">Kiedy masz czas?</label>
+            <label for="datetime">🕑 Kiedy masz czas?</label>
             <input type="datetime-local" id="datetime" name="Data_i_godzina" required>
             <button type="button" onclick="nextStep(2)">Dalej</button>
         </div>
 
         <!-- Krok 2: Wybór aktywności -->
         <div class="step" id="step-2">
-            <label>Co chcemy robić?</label>
+            <label>👫 Co chcemy robić?</label>
             <div class="activities">
                 <label class="activity">
                     <input type="radio" name="Aktywność" value="Jedzonko" required hidden>
