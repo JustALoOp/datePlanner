@@ -175,7 +175,7 @@
             <p>Twoja randka została zaplanowana</p>
             <p id="summary-info"></p>
             <img src="https://media.tenor.com/-ufrqpl5cp0AAAAM/test.gif" alt="Podziękowanie" style="max-width: 100px; margin-top: 10px; margin-bottom: 10px;">
-            <button onclick="addToCalendar()">🗓️ Dodaj do kalendarza</button>
+            <button type="button" onclick="addToCalendar()">🗓️ Dodaj do kalendarza</button>
         </div>
     </form>
 
@@ -184,88 +184,82 @@
     </footer>
 
     <script>
-// Funkcja obsługi przycisków nawigacji formularza
-function nextStep(step) {
-    const formSteps = document.querySelectorAll('.step');
-    formSteps.forEach((stepElement, index) => {
-        stepElement.style.display = index + 1 === step ? 'block' : 'none';
-    });
+        // Funkcje do przechodzenia między krokami
+        function nextStep(step) {
+            const datetime = document.getElementById('datetime').value;
+            const activitySelected = document.querySelector('input[name="Aktywność"]:checked');
 
-    // Sprawdź czy to trzeci krok, aby zapobiec automatycznemu wysłaniu formularza
-    if (step === 3) {
-        document.querySelector('form').onsubmit = null; // Usuń automatyczne wywołanie submitForm
-    }
-}
+            if (step === 2 && !datetime) {
+                alert('Proszę wybrać datę.');
+                return;
+            }
 
-function prevStep(step) {
-    document.querySelectorAll('.step').forEach(stepDiv => {
-        stepDiv.classList.remove('active');
-    });
-    document.getElementById(`step-${step}`).classList.add('active');
-}
+            if (step === 3 && !activitySelected) {
+                alert('Proszę wybrać aktywność.');
+                return;
+            }
 
-// Obsługa pola tekstowego dla opcji "Zaproponuj własne"
-document.getElementById('custom-option').addEventListener('change', function () {
-    const customTextContainer = document.getElementById('custom-text-container');
-    if (this.checked) {
-        customTextContainer.style.display = 'block';
-    }
-});
+            document.querySelectorAll('.step').forEach(stepDiv => {
+                stepDiv.classList.remove('active');
+            });
 
-document.querySelectorAll('input[name="Aktywność"]').forEach(radio => {
-    radio.addEventListener('change', function () {
-        if (this.value !== 'Zaproponuj własne') {
-            document.getElementById('custom-text-container').style.display = 'none';
+            document.getElementById(`step-${step}`).classList.add('active');
         }
-        // Zaznaczenie aktywności
-        document.querySelectorAll('.activity').forEach(activity => {
-            activity.classList.remove('selected');
+
+        function prevStep(step) {
+            document.querySelectorAll('.step').forEach(stepDiv => {
+                stepDiv.classList.remove('active');
+            });
+
+            document.getElementById(`step-${step}`).classList.add('active');
+        }
+
+        document.getElementById('custom-option').addEventListener('change', function () {
+            const customTextContainer = document.getElementById('custom-text-container');
+            customTextContainer.style.display = this.checked ? 'block' : 'none';
         });
-        this.parentElement.classList.add('selected');
-    });
-});
 
-// Funkcja wysyłania formularza
-function submitForm() {
-    const datetime = document.getElementById('datetime').value;
-    const activity = document.querySelector('input[name="Aktywność"]:checked').value;
-    const customActivity = document.getElementById('custom-activity').value;
+        document.querySelectorAll('input[name="Aktywność"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                document.getElementById('next-step-2').disabled = false;
 
-    // Jeśli wybrano własną aktywność, upewnij się, że pole zostało wypełnione
-    if (activity === 'Zaproponuj własne' && !customActivity.trim()) {
-        alert('Proszę wpisać własną propozycję aktywności.');
-        return;
-    }
+                if (this.value !== 'Zaproponuj własne') {
+                    document.getElementById('custom-text-container').style.display = 'none';
+                }
 
-    const formData = new FormData();
-    formData.append('Data', datetime);
-    formData.append('Aktywność', activity === 'Zaproponuj własne' ? customActivity : activity);
+                document.querySelectorAll('.activity').forEach(activity => {
+                    activity.classList.remove('selected');
+                });
 
-    fetch('https://formspree.io/f/meoonyvk', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-        },
-        body: formData,
-        mode: 'no-cors'
-    });
+                this.parentElement.classList.add('selected');
+            });
+        });
 
-    alert('Formularz został wysłany pomyślnie!');
-}
+        function submitForm(event) {
+            if (event) {
+                event.preventDefault();
+            }
 
-// Funkcja dodawania do kalendarza
-function addToCalendar() {
-    const datetime = document.getElementById('datetime').value;
-    const activity = document.querySelector('input[name="Aktywność"]:checked').value;
-    const customActivity = document.getElementById('custom-activity').value || '';
+            const datetime = document.getElementById('datetime').value;
+            const activity = document.querySelector('input[name="Aktywność"]:checked').value;
+            const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : '';
 
-    const startTime = new Date(datetime).toISOString();
-    const endTime = new Date(new Date(datetime).getTime() + 3600000).toISOString(); // 1 godzina później
-    const eventTitle = activity === 'Zaproponuj własne' ? customActivity : activity;
+            const summaryInfo = `Jesteśmy umówieni <b>${datetime}</b> na <b>${activity}</b>` + (customActivity ? `: ${customActivity}` : '') + '.';
 
-    const googleCalendarUrl = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(eventTitle)}&dates=${startTime}/${endTime}`;
-    window.open(googleCalendarUrl, '_blank');
-}
+            document.getElementById('summary-info').innerHTML = summaryInfo;
+        }
+
+        function addToCalendar() {
+            const datetime = document.getElementById('datetime').value;
+            const activity = document.querySelector('input[name="Aktywność"]:checked').value;
+            const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : '';
+            
+            const eventDetails = encodeURIComponent(`${activity}${customActivity ? `: ${customActivity}` : ''}`);
+            const startTime = new Date(datetime).toISOString().replace(/-|:|\.\d\d\d/g, "");
+
+            const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${eventDetails}&dates=${startTime}/${startTime}`;
+            window.open(calendarUrl, '_blank');
+        }
     </script>
 </body>
 </html>
