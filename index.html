@@ -36,7 +36,8 @@
         }
 
         input, select, button {
-            width: 100%;
+            width: calc(100% - 20px); /* Szerokość z marginesem */
+            max-width: 300px; /* Maksymalna szerokość */
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ccc;
@@ -65,10 +66,10 @@
     <header>
         <h1>Umów się ze mną na randkę</h1>
     </header>
-    <form action="https://formspree.io/f/meoonyvk" method="POST">
-        <label for="date">Wybierz datę:</label>
-        <input type="date" id="date" name="Data" required>
-        
+    <form action="https://formspree.io/f/your_form_id" method="POST">
+        <label for="datetime">Wybierz datę i godzinę:</label>
+        <input type="datetime-local" id="datetime" name="Data_i_godzina" required>
+
         <label for="activity">Wybierz aktywność:</label>
         <select id="activity" name="Aktywność" required>
             <option value="" disabled selected>Wybierz...</option>
