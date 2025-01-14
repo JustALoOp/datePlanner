@@ -175,7 +175,6 @@
             <p>Twoja randka została zaplanowana</p>
             <p id="summary-info"></p>
             <img src="https://media.tenor.com/-ufrqpl5cp0AAAAM/test.gif" alt="Podziękowanie" style="max-width: 100px; margin-top: 10px; margin-bottom: 10px;">
-            <button type="button" onclick="addToCalendar()">🗓️ Dodaj do kalendarza</button>
         </div>
     </form>
 
@@ -248,7 +247,14 @@
             const activity = document.querySelector('input[name="Aktywność"]:checked').value;
             const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : '';
 
-            const summaryInfo = `Jesteśmy umówieni <b>${datetime}</b> na <b>${activity}</b>` + (customActivity ? `: ${customActivity}` : '') + '.';
+            const finalActivity = activity === 'Zaproponuj własne' ? customActivity : activity;
+
+            if (!finalActivity.trim()) {
+                alert('Nie podano aktywności.');
+                return;
+            }
+
+            const summaryInfo = `Jesteśmy umówieni <b>${datetime}</b> na <b>${finalActivity}</b>.`;
 
             document.getElementById('summary-info').innerHTML = summaryInfo;
 
@@ -260,8 +266,7 @@
                 },
                 body: JSON.stringify({
                     Data_i_godzina: datetime,
-                    Aktywność: activity,
-                    Aktywność_własna: customActivity
+                    Aktywność: finalActivity
                 })
             })
             .then(response => {
@@ -280,8 +285,10 @@
             const datetime = document.getElementById('datetime').value;
             const activity = document.querySelector('input[name="Aktywność"]:checked').value;
             const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : '';
-            
-            const eventDetails = encodeURIComponent(`${activity}${customActivity ? `: ${customActivity}` : ''}`);
+
+            const finalActivity = activity === 'Zaproponuj własne' ? customActivity : activity;
+
+            const eventDetails = encodeURIComponent(finalActivity);
             const startTime = new Date(datetime).toISOString().replace(/-|:|\.\d\d\d/g, "");
 
             const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${eventDetails}&dates=${startTime}/${startTime}`;
