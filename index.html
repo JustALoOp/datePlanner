@@ -50,7 +50,7 @@
         }
 
         input[type="datetime-local"] {
-            width: 250px; /* Zmniejszono szerokość datepickera */
+            width: 250px;
         }
 
         button {
@@ -118,7 +118,6 @@
         <h1>RandkoPlaner 🗒️</h1>
     </header>
 
-    <!-- Formularz -->
     <form id="appointmentForm" onsubmit="submitForm(event)">
         <!-- Krok 1: Wybór daty i godziny -->
         <div class="step active" id="step-1">
@@ -216,96 +215,77 @@ function nextStep(step) {
 
     // Automatyczne wysłanie formularza po przejściu do kroku 3
     if (step === 3) {
-        submitForm();
+        submitForm();  // Wywołanie funkcji wysyłającej formularz
     }
 }
 
-        function prevStep(step) {
-            document.querySelectorAll('.step').forEach(stepDiv => {
-                stepDiv.classList.remove('active');
-            });
-            document.getElementById(`step-${step}`).classList.add('active');
+function prevStep(step) {
+    document.querySelectorAll('.step').forEach(stepDiv => {
+        stepDiv.classList.remove('active');
+    });
+    document.getElementById(`step-${step}`).classList.add('active');
+}
+
+// Obsługa pola tekstowego dla opcji "Zaproponuj własne"
+document.getElementById('custom-option').addEventListener('change', function () {
+    const customTextContainer = document.getElementById('custom-text-container');
+    if (this.checked) {
+        customTextContainer.style.display = 'block';
+    }
+});
+
+document.querySelectorAll('input[name="Aktywność"]').forEach(radio => {
+    radio.addEventListener('change', function () {
+        if (this.value !== 'Zaproponuj własne') {
+            document.getElementById('custom-text-container').style.display = 'none';
         }
-
-        // Obsługa pola tekstowego dla opcji "Zaproponuj własne"
-        document.getElementById('custom-option').addEventListener('change', function () {
-            const customTextContainer = document.getElementById('custom-text-container');
-            if (this.checked) {
-                customTextContainer.style.display = 'block';
-            }
+        // Zaznaczenie aktywności
+        document.querySelectorAll('.activity').forEach(activity => {
+            activity.classList.remove('selected');
         });
+        this.parentElement.classList.add('selected');
+    });
+});
 
-        document.querySelectorAll('input[name="Aktywność"]').forEach(radio => {
-            radio.addEventListener('change', function () {
-                if (this.value !== 'Zaproponuj własne') {
-                    document.getElementById('custom-text-container').style.display = 'none';
-                }
-                // Zaznaczenie aktywności
-                document.querySelectorAll('.activity').forEach(activity => {
-                    activity.classList.remove('selected');
-                });
-                this.parentElement.classList.add('selected');
-            });
-        });
-
-        // Funkcja wysyłająca formularz
-        function submitForm(event) {
-            event.preventDefault();
-            
-            // Zbieranie danych z formularza
-            const datetime = document.getElementById('datetime').value;
-            const activity = document.querySelector('input[name="Aktywność"]:checked').value;
-            const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : '';
-
-            // Podsumowanie
-            const summaryInfo = `Zaplanowałeś/aś randkę na ${datetime}, aktywność: ${activity === 'Zaproponuj własne' ? customActivity : activity}.`;
-
-            // Ukrywanie formularza i pokazanie podsumowania
-            document.querySelector('form').style.display = 'none';
-            document.getElementById('step-3').style.display = 'block';
-            document.getElementById('summary-info').textContent = summaryInfo;
-
-            // Przygotowanie danych do wysłania
-            const formData = new FormData();
-            formData.append('Data_i_godzina', datetime);
-            formData.append('Aktywność', activity === 'Zaproponuj własne' ? customActivity : activity);
-
-            // Wysłanie formularza do Formspree za pomocą AJAX
-            fetch('https://formspree.io/f/meoonyvk', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Formularz został wysłany!');
-                } else {
-                    console.error('Wystąpił błąd przy wysyłaniu formularza');
-                }
-            })
-            .catch(error => {
-                console.error('Błąd wysyłania formularza', error);
-            });
-        }
-
-// Funkcja do dodania do kalendarza
-function addToCalendar() {
+// Funkcja wysyłająca formularz
+function submitForm(event) {
+    if (event) {
+        event.preventDefault(); // Zabezpieczenie przed błędem, gdy event jest undefined
+    }
+    
+    // Zbieranie danych z formularza
     const datetime = document.getElementById('datetime').value;
     const activity = document.querySelector('input[name="Aktywność"]:checked').value;
     const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : '';
 
-    // Ustalamy tytuł na podstawie aktywności
-    const title = `Randka - ${activity === 'Zaproponuj własne' ? customActivity : activity}`;
-    const details = `Spotkanie zaplanowane na ${activity === 'Zaproponuj własne' ? customActivity : activity}.`;
+    // Podsumowanie
+    const summaryInfo = `Zaplanowałeś/aś randkę na ${datetime}, aktywność: ${activity === 'Zaproponuj własne' ? customActivity : activity}.`;
 
-    const eventDate = new Date(datetime);
+    // Ukrywanie formularza i pokazanie podsumowania
+    document.querySelector('form').style.display = 'none';
+    document.getElementById('step-3').style.display = 'block';
+    document.getElementById('summary-info').textContent = summaryInfo;
 
-    // Formatowanie daty na format kalendarza Google
-    const startDate = eventDate.toISOString().replace(/-|:|\.\d+/g, ''); // Usuń zbędne znaki z ISO
-    const endDate = new Date(eventDate.getTime() + 60 * 60 * 1000).toISOString().replace(/-|:|\.\d+/g, ''); // Dodaj godzinę na zakończenie
+    // Przygotowanie danych do wysłania
+    const formData = new FormData();
+    formData.append('Data_i_godzina', datetime);
+    formData.append('Aktywność', activity === 'Zaproponuj własne' ? customActivity : activity);
 
-    const googleCalendarURL = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(details)}`;
-
-    window.open(googleCalendarURL, '_blank');
+    // Wysłanie formularza do Formspree za pomocą AJAX
+    fetch('https://formspree.io/f/meoonyvk', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Formularz został wysłany!');
+        } else {
+            console.error('Wystąpił błąd przy wysyłaniu formularza');
+        }
+    })
+    .catch(error => {
+        console.error('Błąd wysyłania formularza', error);
+    });
 }
     </script>
 </body>
