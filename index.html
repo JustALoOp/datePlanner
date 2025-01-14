@@ -71,11 +71,23 @@
             width: 45%;
             margin-bottom: 20px;
             cursor: pointer;
+            text-align: center;
         }
 
         .activity img {
             max-width: 100%;
             border-radius: 8px;
+        }
+
+        .activity span {
+            display: block;
+            margin-top: 8px;
+            font-weight: bold;
+        }
+
+        #custom-text-container {
+            display: none;
+            margin-top: 15px;
         }
 
         footer {
@@ -104,27 +116,37 @@
                 <label class="activity">
                     <input type="radio" name="Aktywność" value="Jedzonko" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2021/01/22/18/00/shrimp-5940735_1280.jpg" alt="Jedzonko">
+                    <span>Jedzonko</span>
                 </label>
                 <label class="activity">
                     <input type="radio" name="Aktywność" value="Spacer" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2018/06/12/21/26/person-3471540_1280.jpg" alt="Spacer">
+                    <span>Spacer</span>
                 </label>
                 <label class="activity">
                     <input type="radio" name="Aktywność" value="Kręgle" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2015/01/11/21/25/bowling-596766_1280.jpg" alt="Kręgle">
+                    <span>Kręgle</span>
                 </label>
                 <label class="activity">
                     <input type="radio" name="Aktywność" value="Kino" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2017/07/13/23/11/cinema-2502213_1280.jpg" alt="Kino">
+                    <span>Kino</span>
                 </label>
                 <label class="activity">
                     <input type="radio" name="Aktywność" value="Kawa" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2022/01/31/15/18/coffee-6984075_1280.jpg" alt="Kawa">
+                    <span>Kawa</span>
                 </label>
                 <label class="activity">
-                    <input type="radio" name="Aktywność" value="Zaproponuj własne" required hidden>
+                    <input type="radio" name="Aktywność" value="Zaproponuj własne" id="custom-option" hidden>
                     <img src="https://cdn.pixabay.com/photo/2015/05/31/13/45/working-791849_1280.jpg" alt="Zaproponuj własne">
+                    <span>Zaproponuj własne</span>
                 </label>
+            </div>
+            <div id="custom-text-container">
+                <label for="custom-activity">Wpisz swoją propozycję:</label>
+                <input type="text" id="custom-activity" name="Aktywność_własna" placeholder="Twoja propozycja">
             </div>
             <button type="button" onclick="prevStep(1)">Wstecz</button>
             <button type="submit">Zaproś mnie!</button>
@@ -150,6 +172,22 @@
             });
             document.getElementById(`step-${step}`).classList.add('active');
         }
+
+        // Obsługa pola tekstowego dla opcji "Zaproponuj własne"
+        document.getElementById('custom-option').addEventListener('change', function () {
+            const customTextContainer = document.getElementById('custom-text-container');
+            if (this.checked) {
+                customTextContainer.style.display = 'block';
+            }
+        });
+
+        document.querySelectorAll('input[name="Aktywność"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (this.value !== 'Zaproponuj własne') {
+                    document.getElementById('custom-text-container').style.display = 'none';
+                }
+            });
+        });
     </script>
 </body>
 </html>
