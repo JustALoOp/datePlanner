@@ -20,7 +20,12 @@
             padding: 20px;
         }
 
-        form {
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
             margin: 20px auto;
             width: 300px;
             padding: 20px;
@@ -35,9 +40,9 @@
             font-weight: bold;
         }
 
-        input, select, button {
-            width: calc(100% - 20px); /* Szerokość z marginesem */
-            max-width: 300px; /* Maksymalna szerokość */
+        input, button {
+            width: calc(100% - 20px);
+            max-width: 300px;
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ccc;
@@ -55,6 +60,24 @@
             background-color: #0056b3;
         }
 
+        .activities {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .activity {
+            width: 45%;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .activity img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
         footer {
             margin-top: 20px;
             font-size: 14px;
@@ -67,23 +90,66 @@
         <h1>Umów się ze mną na randkę</h1>
     </header>
     <form action="https://formspree.io/f/your_form_id" method="POST">
-        <label for="datetime">Wybierz datę i godzinę:</label>
-        <input type="datetime-local" id="datetime" name="Data_i_godzina" required>
+        <!-- Krok 1: Wybór daty i godziny -->
+        <div class="step active" id="step-1">
+            <label for="datetime">Wybierz datę i godzinę:</label>
+            <input type="datetime-local" id="datetime" name="Data_i_godzina" required>
+            <button type="button" onclick="nextStep(2)">Dalej</button>
+        </div>
 
-        <label for="activity">Wybierz aktywność:</label>
-        <select id="activity" name="Aktywność" required>
-            <option value="" disabled selected>Wybierz...</option>
-            <option value="Kolacja">Kolacja</option>
-            <option value="Spacer">Spacer</option>
-            <option value="Kino">Kino</option>
-            <option value="Wycieczka">Wycieczka</option>
-        </select>
-        
-        <button type="submit">Zaproś mnie!</button>
+        <!-- Krok 2: Wybór aktywności -->
+        <div class="step" id="step-2">
+            <label>Wybierz aktywność:</label>
+            <div class="activities">
+                <label class="activity">
+                    <input type="radio" name="Aktywność" value="Jedzonko" required hidden>
+                    <img src="https://via.placeholder.com/150?text=Jedzonko" alt="Jedzonko">
+                </label>
+                <label class="activity">
+                    <input type="radio" name="Aktywność" value="Spacer" required hidden>
+                    <img src="https://via.placeholder.com/150?text=Spacer" alt="Spacer">
+                </label>
+                <label class="activity">
+                    <input type="radio" name="Aktywność" value="Kręgle" required hidden>
+                    <img src="https://via.placeholder.com/150?text=Kręgle" alt="Kręgle">
+                </label>
+                <label class="activity">
+                    <input type="radio" name="Aktywność" value="Kino" required hidden>
+                    <img src="https://via.placeholder.com/150?text=Kino" alt="Kino">
+                </label>
+                <label class="activity">
+                    <input type="radio" name="Aktywność" value="Kawa" required hidden>
+                    <img src="https://via.placeholder.com/150?text=Kawa" alt="Kawa">
+                </label>
+                <label class="activity">
+                    <input type="radio" name="Aktywność" value="Zaproponuj własne" required hidden>
+                    <img src="https://via.placeholder.com/150?text=Zaproponuj+własne" alt="Zaproponuj własne">
+                </label>
+            </div>
+            <button type="button" onclick="prevStep(1)">Wstecz</button>
+            <button type="submit">Zaproś mnie!</button>
+        </div>
     </form>
 
     <footer>
         <p>Stworzono z ❤️</p>
     </footer>
+
+    <script>
+        // Funkcje do przechodzenia między krokami
+        function nextStep(step) {
+            document.querySelectorAll('.step').forEach(stepDiv => {
+                stepDiv.classList.remove('active');
+            });
+            document.getElementById(`step-${step}`).classList.add('active');
+        }
+
+        function prevStep(step) {
+            document.querySelectorAll('.step').forEach(stepDiv => {
+                stepDiv.classList.remove('active');
+            });
+            document.getElementById(`step-${step}`).classList.add('active');
+        }
+    </script>
 </body>
 </html>
