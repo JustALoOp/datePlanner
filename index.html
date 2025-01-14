@@ -72,6 +72,10 @@
             margin-bottom: 20px;
             cursor: pointer;
             text-align: center;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 10px;
+            transition: border-color 0.3s ease;
         }
 
         .activity img {
@@ -85,6 +89,11 @@
             font-weight: bold;
         }
 
+        .activity.selected {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+
         #custom-text-container {
             display: none;
             margin-top: 15px;
@@ -95,13 +104,23 @@
             font-size: 14px;
             color: #666;
         }
+
+        #summary {
+            display: none;
+        }
+
+        input[type="datetime-local"] {
+            width: 100%;
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>Umów się ze mną na randkę</h1>
     </header>
-    <form action="https://formspree.io/f/your_form_id" method="POST">
+
+    <!-- Formularz -->
+    <form id="appointmentForm" onsubmit="submitForm(event)">
         <!-- Krok 1: Wybór daty i godziny -->
         <div class="step active" id="step-1">
             <label for="datetime">Wybierz datę i godzinę:</label>
@@ -113,32 +132,32 @@
         <div class="step" id="step-2">
             <label>Wybierz aktywność:</label>
             <div class="activities">
-                <label class="activity">
+                <label class="activity" onclick="selectActivity(this)">
                     <input type="radio" name="Aktywność" value="Jedzonko" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2021/01/22/18/00/shrimp-5940735_1280.jpg" alt="Jedzonko">
                     <span>Jedzonko</span>
                 </label>
-                <label class="activity">
+                <label class="activity" onclick="selectActivity(this)">
                     <input type="radio" name="Aktywność" value="Spacer" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2018/06/12/21/26/person-3471540_1280.jpg" alt="Spacer">
                     <span>Spacer</span>
                 </label>
-                <label class="activity">
+                <label class="activity" onclick="selectActivity(this)">
                     <input type="radio" name="Aktywność" value="Kręgle" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2015/01/11/21/25/bowling-596766_1280.jpg" alt="Kręgle">
                     <span>Kręgle</span>
                 </label>
-                <label class="activity">
+                <label class="activity" onclick="selectActivity(this)">
                     <input type="radio" name="Aktywność" value="Kino" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2017/07/13/23/11/cinema-2502213_1280.jpg" alt="Kino">
                     <span>Kino</span>
                 </label>
-                <label class="activity">
+                <label class="activity" onclick="selectActivity(this)">
                     <input type="radio" name="Aktywność" value="Kawa" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2022/01/31/15/18/coffee-6984075_1280.jpg" alt="Kawa">
                     <span>Kawa</span>
                 </label>
-                <label class="activity">
+                <label class="activity" onclick="selectActivity(this)">
                     <input type="radio" name="Aktywność" value="Zaproponuj własne" id="custom-option" hidden>
                     <img src="https://cdn.pixabay.com/photo/2015/05/31/13/45/working-791849_1280.jpg" alt="Zaproponuj własne">
                     <span>Zaproponuj własne</span>
@@ -153,6 +172,14 @@
         </div>
     </form>
 
+    <!-- Podsumowanie -->
+    <div id="summary">
+        <h2>Dziękujemy za zaproszenie!</h2>
+        <p>Twoja randka została zaplanowana!</p>
+        <p id="summary-info"></p>
+        <button onclick="addToCalendar()">Dodaj do kalendarza</button>
+    </div>
+
     <footer>
         <p>Stworzono z ❤️</p>
     </footer>
@@ -160,6 +187,14 @@
     <script>
         // Funkcje do przechodzenia między krokami
         function nextStep(step) {
+            const datetime = document.getElementById('datetime').value;
+            const activity = document.querySelector('input[name="Aktywność"]:checked');
+            
+            if (!datetime || !activity) {
+                alert('Proszę wybrać datę oraz aktywność.');
+                return;
+            }
+
             document.querySelectorAll('.step').forEach(stepDiv => {
                 stepDiv.classList.remove('active');
             });
@@ -173,6 +208,14 @@
             document.getElementById(`step-${step}`).classList.add('active');
         }
 
+        // Funkcja zaznaczania aktywności
+        function selectActivity(activityLabel) {
+            document.querySelectorAll('.activity').forEach(item => item.classList.remove('selected'));
+            activityLabel.classList.add('selected');
+            const radio = activityLabel.querySelector('input[type="radio"]');
+            radio.checked = true;
+        }
+
         // Obsługa pola tekstowego dla opcji "Zaproponuj własne"
         document.getElementById('custom-option').addEventListener('change', function () {
             const customTextContainer = document.getElementById('custom-text-container');
@@ -181,13 +224,35 @@
             }
         });
 
-        document.querySelectorAll('input[name="Aktywność"]').forEach(radio => {
-            radio.addEventListener('change', function () {
-                if (this.value !== 'Zaproponuj własne') {
-                    document.getElementById('custom-text-container').style.display = 'none';
-                }
-            });
-        });
+        // Funkcja wysyłająca formularz
+        function submitForm(event) {
+            event.preventDefault();
+            
+            // Zbieranie danych z formularza
+            const datetime = document.getElementById('datetime').value;
+            const activity = document.querySelector('input[name="Aktywność"]:checked').value;
+            const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : '';
+
+            // Podsumowanie
+            const summaryInfo = `Zaplanowałeś/aś randkę na ${datetime}, aktywność: ${activity === 'Zaproponuj własne' ? customActivity : activity}.`;
+
+            // Ukrywanie formularza i pokazanie podsumowania
+            document.querySelector('form').style.display = 'none';
+            document.getElementById('summary').style.display = 'block';
+            document.getElementById('summary-info').textContent = summaryInfo;
+        }
+
+        // Funkcja do dodania do kalendarza
+        function addToCalendar() {
+            const datetime = document.getElementById('datetime').value;
+            const activity = document.querySelector('input[name="Aktywność"]:checked').value;
+            const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : activity;
+
+            const eventDate = new Date(datetime);
+            const googleCalendarURL = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(customActivity)}&dates=${eventDate.toISOString().replace(/-|:|\.\d+/g, '')}/${eventDate.toISOString().replace(/-|:|\.\d+/g, '')}&details=${encodeURIComponent('Randka zaplanowana przez formularz.')}`;
+
+            window.open(googleCalendarURL, '_blank');
+        }
     </script>
 </body>
 </html>
