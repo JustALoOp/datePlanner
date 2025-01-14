@@ -274,7 +274,8 @@ function submitForm(event) {
     // Wysłanie formularza do Formspree za pomocą AJAX
     fetch('https://formspree.io/f/meoonyvk', {
         method: 'POST',
-        body: formData
+        body: formData,
+        mode: 'no-cors'
     })
     .then(response => {
         if (response.ok) {
