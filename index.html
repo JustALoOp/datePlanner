@@ -186,7 +186,7 @@
     <script>
 // Funkcja obsługi przycisków nawigacji formularza
 function nextStep(step) {
-    const formSteps = document.querySelectorAll('.form-step');
+    const formSteps = document.querySelectorAll('.step');
     formSteps.forEach((stepElement, index) => {
         stepElement.style.display = index + 1 === step ? 'block' : 'none';
     });
