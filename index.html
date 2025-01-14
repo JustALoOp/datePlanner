@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Umów się ze mną</title>
+    <title>RandkoPlaner:)</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -115,21 +115,21 @@
 </head>
 <body>
     <header>
-        <h1>Umów się ze mną na randkę</h1>
+        <h1>RandkoPlaner:)</h1>
     </header>
 
     <!-- Formularz -->
     <form id="appointmentForm" onsubmit="submitForm(event)">
         <!-- Krok 1: Wybór daty i godziny -->
         <div class="step active" id="step-1">
-            <label for="datetime">Wybierz datę i godzinę:</label>
+            <label for="datetime">Kiedy masz czas?</label>
             <input type="datetime-local" id="datetime" name="Data_i_godzina" required>
             <button type="button" onclick="nextStep(2)">Dalej</button>
         </div>
 
         <!-- Krok 2: Wybór aktywności -->
         <div class="step" id="step-2">
-            <label>Wybierz aktywność:</label>
+            <label>Co chcemy robić?</label>
             <div class="activities">
                 <label class="activity">
                     <input type="radio" name="Aktywność" value="Jedzonko" required hidden>
@@ -172,9 +172,10 @@
 
         <!-- Krok 3: Podsumowanie -->
         <div class="step" id="step-3">
-            <h2>Dziękujemy za zaproszenie!</h2>
-            <p>Twoja randka została zaplanowana!</p>
+            <h2>Dziękuję!</h2>
+            <p>Twoja randka została zaplanowana</p>
             <p id="summary-info"></p>
+            <img src="https://media.tenor.com/-ufrqpl5cp0AAAAM/test.gif" alt="Podziękowanie" style="max-width: 100px; margin-top: 10px;">
             <button onclick="addToCalendar()">Dodaj do kalendarza</button>
         </div>
     </form>
