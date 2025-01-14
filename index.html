@@ -262,7 +262,7 @@ function submitForm(event) {
     const summaryInfo = `Zaplanowałeś/aś randkę na ${datetime}, aktywność: ${activity === 'Zaproponuj własne' ? customActivity : activity}.`;
 
     // Ukrywanie formularza i pokazanie podsumowania
-    document.querySelector('step-2').style.display = 'none';
+    document.getElementById('step-2').style.display = 'none';
     document.getElementById('step-3').style.display = 'block';
     document.getElementById('summary-info').textContent = summaryInfo;
 
