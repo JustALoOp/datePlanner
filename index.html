@@ -185,35 +185,40 @@
     </footer>
 
     <script>
-        // Funkcje do przechodzenia między krokami
-        function nextStep(step) {
-            const datetime = document.getElementById('datetime').value;
-            const activitySelected = document.querySelector('input[name="Aktywność"]:checked');
-            
-            // Sprawdzamy, czy można przejść do następnego kroku
-            if (step === 2 && !datetime) {
-                alert('Proszę wybrać datę.');
-                return;
-            }
+// Funkcje do przechodzenia między krokami
+function nextStep(step) {
+    const datetime = document.getElementById('datetime').value;
+    const activitySelected = document.querySelector('input[name="Aktywność"]:checked');
+    
+    // Sprawdzamy, czy można przejść do następnego kroku
+    if (step === 2 && !datetime) {
+        alert('Proszę wybrać datę.');
+        return;
+    }
 
-            if (step === 3 && !activitySelected) {
-                alert('Proszę wybrać aktywność.');
-                return;
-            }
+    if (step === 3 && !activitySelected) {
+        alert('Proszę wybrać aktywność.');
+        return;
+    }
 
-            // Ukrycie aktualnego kroku
-            document.querySelectorAll('.step').forEach(stepDiv => {
-                stepDiv.classList.remove('active');
-            });
+    // Ukrycie aktualnego kroku
+    document.querySelectorAll('.step').forEach(stepDiv => {
+        stepDiv.classList.remove('active');
+    });
 
-            // Pokaż kolejny krok
-            document.getElementById(`step-${step}`).classList.add('active');
-            
-            // Zmiana przycisku w kroku 2
-            if (step === 2) {
-                document.getElementById('next-step-2').disabled = false;
-            }
-        }
+    // Pokaż kolejny krok
+    document.getElementById(`step-${step}`).classList.add('active');
+
+    // Zmiana przycisku w kroku 2
+    if (step === 2) {
+        document.getElementById('next-step-2').disabled = false;
+    }
+
+    // Automatyczne wysłanie formularza po przejściu do kroku 3
+    if (step === 3) {
+        submitForm();
+    }
+}
 
         function prevStep(step) {
             document.querySelectorAll('.step').forEach(stepDiv => {
