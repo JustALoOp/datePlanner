@@ -184,38 +184,16 @@
     </footer>
 
     <script>
-// Funkcje do przechodzenia między krokami
+// Funkcja obsługi przycisków nawigacji formularza
 function nextStep(step) {
-    const datetime = document.getElementById('datetime').value;
-    const activitySelected = document.querySelector('input[name="Aktywność"]:checked');
-    
-    // Sprawdzamy, czy można przejść do następnego kroku
-    if (step === 2 && !datetime) {
-        alert('Proszę wybrać datę.');
-        return;
-    }
-
-    if (step === 3 && !activitySelected) {
-        alert('Proszę wybrać aktywność.');
-        return;
-    }
-
-    // Ukrycie aktualnego kroku
-    document.querySelectorAll('.step').forEach(stepDiv => {
-        stepDiv.classList.remove('active');
+    const formSteps = document.querySelectorAll('.form-step');
+    formSteps.forEach((stepElement, index) => {
+        stepElement.style.display = index + 1 === step ? 'block' : 'none';
     });
 
-    // Pokaż kolejny krok
-    document.getElementById(`step-${step}`).classList.add('active');
-
-    // Zmiana przycisku w kroku 2
-    if (step === 2) {
-        document.getElementById('next-step-2').disabled = false;
-    }
-
-    // Automatyczne wysłanie formularza po przejściu do kroku 3
+    // Sprawdź czy to trzeci krok, aby zapobiec automatycznemu wysłaniu formularza
     if (step === 3) {
-        submitForm();  // Wywołanie funkcji wysyłającej formularz
+        document.querySelector('form').onsubmit = null; // Usuń automatyczne wywołanie submitForm
     }
 }
 
@@ -247,46 +225,46 @@ document.querySelectorAll('input[name="Aktywność"]').forEach(radio => {
     });
 });
 
-// Funkcja wysyłająca formularz
-function submitForm(event) {
-    if (event) {
-        event.preventDefault(); // Zabezpieczenie przed błędem, gdy event jest undefined
-    }
-    
-    // Zbieranie danych z formularza
+// Funkcja wysyłania formularza
+function submitForm() {
     const datetime = document.getElementById('datetime').value;
     const activity = document.querySelector('input[name="Aktywność"]:checked').value;
-    const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : '';
+    const customActivity = document.getElementById('custom-activity').value;
 
-    // Podsumowanie
-    const summaryInfo = `Jesteśmy umówieni <b>${datetime}</b> na <b>${activity === 'Zaproponuj własne' ? customActivity : activity}</b>.`;
+    // Jeśli wybrano własną aktywność, upewnij się, że pole zostało wypełnione
+    if (activity === 'Zaproponuj własne' && !customActivity.trim()) {
+        alert('Proszę wpisać własną propozycję aktywności.');
+        return;
+    }
 
-    // Ukrywanie formularza i pokazanie podsumowania
-    document.getElementById('step-2').style.display = 'none';
-    document.getElementById('step-3').style.display = 'block';
-    document.getElementById('summary-info').textContent = summaryInfo;
-
-    // Przygotowanie danych do wysłania
     const formData = new FormData();
-    formData.append('Data_i_godzina', datetime);
+    formData.append('Data', datetime);
     formData.append('Aktywność', activity === 'Zaproponuj własne' ? customActivity : activity);
 
-    // Wysłanie formularza do Formspree za pomocą AJAX
     fetch('https://formspree.io/f/meoonyvk', {
         method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+        },
         body: formData,
         mode: 'no-cors'
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log('Formularz został wysłany!');
-        } else {
-            console.error('Wystąpił błąd przy wysyłaniu formularza');
-        }
-    })
-    .catch(error => {
-        console.error('Błąd wysyłania formularza', error);
     });
+
+    alert('Formularz został wysłany pomyślnie!');
+}
+
+// Funkcja dodawania do kalendarza
+function addToCalendar() {
+    const datetime = document.getElementById('datetime').value;
+    const activity = document.querySelector('input[name="Aktywność"]:checked').value;
+    const customActivity = document.getElementById('custom-activity').value || '';
+
+    const startTime = new Date(datetime).toISOString();
+    const endTime = new Date(new Date(datetime).getTime() + 3600000).toISOString(); // 1 godzina później
+    const eventTitle = activity === 'Zaproponuj własne' ? customActivity : activity;
+
+    const googleCalendarUrl = `https://calendar.google.com/calendar/r/eventedit?text=${encodeURIComponent(eventTitle)}&dates=${startTime}/${endTime}`;
+    window.open(googleCalendarUrl, '_blank');
 }
     </script>
 </body>
