@@ -49,8 +49,8 @@
             border-radius: 4px;
         }
 
-        input[type="datetime-local"], button {
-            width: 100%;
+        input[type="datetime-local"] {
+            width: 250px; /* Zmniejszono szerokość datepickera */
         }
 
         button {
@@ -267,7 +267,10 @@
             const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : activity;
 
             const eventDate = new Date(datetime);
-            const googleCalendarURL = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(customActivity)}&dates=${eventDate.toISOString().replace(/-|:|\.\d+/g, '')}/${eventDate.toISOString().replace(/-|:|\.\d+/g, '')}&details=${encodeURIComponent('Randka zaplanowana przez formularz.')}`;
+            const title = `Randka - ${customActivity}`;
+            const details = `Spotkanie zaplanowane na ${activity === 'Zaproponuj własne' ? customActivity : activity}.`;
+
+            const googleCalendarURL = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${eventDate.toISOString().replace(/-|:|\.\d+/g, '')}/${eventDate.toISOString().replace(/-|:|\.\d+/g, '')}&details=${encodeURIComponent(details)}`;
 
             window.open(googleCalendarURL, '_blank');
         }
