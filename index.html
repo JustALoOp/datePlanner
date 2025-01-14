@@ -204,6 +204,10 @@
             });
 
             document.getElementById(`step-${step}`).classList.add('active');
+
+            if (step === 3) {
+                submitForm();
+            }
         }
 
         function prevStep(step) {
