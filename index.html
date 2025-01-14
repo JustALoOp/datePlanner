@@ -49,6 +49,11 @@
             border-radius: 4px;
         }
 
+        /* Ustawienie szerokości dla inputa i przycisku */
+        input[type="datetime-local"], button {
+            width: 100%;
+        }
+
         button {
             background-color: #007bff;
             color: white;
@@ -74,8 +79,7 @@
             text-align: center;
             border: 2px solid transparent;
             border-radius: 8px;
-            padding: 10px;
-            transition: border-color 0.3s ease;
+            padding: 5px;
         }
 
         .activity img {
@@ -108,10 +112,6 @@
         #summary {
             display: none;
         }
-
-        input[type="datetime-local"] {
-            width: 100%;
-        }
     </style>
 </head>
 <body>
@@ -132,32 +132,32 @@
         <div class="step" id="step-2">
             <label>Wybierz aktywność:</label>
             <div class="activities">
-                <label class="activity" onclick="selectActivity(this)">
+                <label class="activity">
                     <input type="radio" name="Aktywność" value="Jedzonko" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2021/01/22/18/00/shrimp-5940735_1280.jpg" alt="Jedzonko">
                     <span>Jedzonko</span>
                 </label>
-                <label class="activity" onclick="selectActivity(this)">
+                <label class="activity">
                     <input type="radio" name="Aktywność" value="Spacer" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2018/06/12/21/26/person-3471540_1280.jpg" alt="Spacer">
                     <span>Spacer</span>
                 </label>
-                <label class="activity" onclick="selectActivity(this)">
+                <label class="activity">
                     <input type="radio" name="Aktywność" value="Kręgle" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2015/01/11/21/25/bowling-596766_1280.jpg" alt="Kręgle">
                     <span>Kręgle</span>
                 </label>
-                <label class="activity" onclick="selectActivity(this)">
+                <label class="activity">
                     <input type="radio" name="Aktywność" value="Kino" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2017/07/13/23/11/cinema-2502213_1280.jpg" alt="Kino">
                     <span>Kino</span>
                 </label>
-                <label class="activity" onclick="selectActivity(this)">
+                <label class="activity">
                     <input type="radio" name="Aktywność" value="Kawa" required hidden>
                     <img src="https://cdn.pixabay.com/photo/2022/01/31/15/18/coffee-6984075_1280.jpg" alt="Kawa">
                     <span>Kawa</span>
                 </label>
-                <label class="activity" onclick="selectActivity(this)">
+                <label class="activity">
                     <input type="radio" name="Aktywność" value="Zaproponuj własne" id="custom-option" hidden>
                     <img src="https://cdn.pixabay.com/photo/2015/05/31/13/45/working-791849_1280.jpg" alt="Zaproponuj własne">
                     <span>Zaproponuj własne</span>
@@ -188,9 +188,9 @@
         // Funkcje do przechodzenia między krokami
         function nextStep(step) {
             const datetime = document.getElementById('datetime').value;
-            const activity = document.querySelector('input[name="Aktywność"]:checked');
-            
-            if (!datetime || !activity) {
+            const activitySelected = document.querySelector('input[name="Aktywność"]:checked');
+
+            if (!datetime || !activitySelected) {
                 alert('Proszę wybrać datę oraz aktywność.');
                 return;
             }
@@ -208,20 +208,25 @@
             document.getElementById(`step-${step}`).classList.add('active');
         }
 
-        // Funkcja zaznaczania aktywności
-        function selectActivity(activityLabel) {
-            document.querySelectorAll('.activity').forEach(item => item.classList.remove('selected'));
-            activityLabel.classList.add('selected');
-            const radio = activityLabel.querySelector('input[type="radio"]');
-            radio.checked = true;
-        }
-
         // Obsługa pola tekstowego dla opcji "Zaproponuj własne"
         document.getElementById('custom-option').addEventListener('change', function () {
             const customTextContainer = document.getElementById('custom-text-container');
             if (this.checked) {
                 customTextContainer.style.display = 'block';
             }
+        });
+
+        document.querySelectorAll('input[name="Aktywność"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (this.value !== 'Zaproponuj własne') {
+                    document.getElementById('custom-text-container').style.display = 'none';
+                }
+                // Zaznaczenie aktywności
+                document.querySelectorAll('.activity').forEach(activity => {
+                    activity.classList.remove('selected');
+                });
+                this.parentElement.classList.add('selected');
+            });
         });
 
         // Funkcja wysyłająca formularz
