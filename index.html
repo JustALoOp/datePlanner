@@ -184,6 +184,13 @@
     </footer>
 
     <script>
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        const userName = getUrlParameter('imie');
+
         // Funkcje do przechodzenia między krokami
         function nextStep(step) {
             const datetime = document.getElementById('datetime').value;
