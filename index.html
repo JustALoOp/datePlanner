@@ -247,6 +247,29 @@
             const summaryInfo = `Jesteśmy umówieni <b>${datetime}</b> na <b>${activity}</b>` + (customActivity ? `: ${customActivity}` : '') + '.';
 
             document.getElementById('summary-info').innerHTML = summaryInfo;
+
+            // Wysyłanie danych do Formspree
+            fetch('https://formspree.io/f/meoonyvk', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    Data_i_godzina: datetime,
+                    Aktywność: activity,
+                    Aktywność_własna: customActivity
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Formularz został pomyślnie wysłany!');
+                } else {
+                    alert('Wystąpił problem podczas wysyłania formularza. Spróbuj ponownie.');
+                }
+            })
+            .catch(error => {
+                alert('Błąd podczas wysyłania formularza: ' + error.message);
+            });
         }
 
         function addToCalendar() {
