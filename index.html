@@ -281,20 +281,26 @@
             });
         }
 
-        // Funkcja do dodania do kalendarza
-        function addToCalendar() {
-            const datetime = document.getElementById('datetime').value;
-            const activity = document.querySelector('input[name="Aktywność"]:checked').value;
-            const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : activity;
+// Funkcja do dodania do kalendarza
+function addToCalendar() {
+    const datetime = document.getElementById('datetime').value;
+    const activity = document.querySelector('input[name="Aktywność"]:checked').value;
+    const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : '';
 
-            const eventDate = new Date(datetime);
-            const title = `Randka - ${customActivity}`;
-            const details = `Spotkanie zaplanowane na ${activity === 'Zaproponuj własne' ? customActivity : activity}.`;
+    // Ustalamy tytuł na podstawie aktywności
+    const title = `Randka - ${activity === 'Zaproponuj własne' ? customActivity : activity}`;
+    const details = `Spotkanie zaplanowane na ${activity === 'Zaproponuj własne' ? customActivity : activity}.`;
 
-            const googleCalendarURL = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${eventDate.toISOString().replace(/-|:|\.\d+/g, '')}/${eventDate.toISOString().replace(/-|:|\.\d+/g, '')}&details=${encodeURIComponent(details)}`;
+    const eventDate = new Date(datetime);
 
-            window.open(googleCalendarURL, '_blank');
-        }
+    // Formatowanie daty na format kalendarza Google
+    const startDate = eventDate.toISOString().replace(/-|:|\.\d+/g, ''); // Usuń zbędne znaki z ISO
+    const endDate = new Date(eventDate.getTime() + 60 * 60 * 1000).toISOString().replace(/-|:|\.\d+/g, ''); // Dodaj godzinę na zakończenie
+
+    const googleCalendarURL = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(details)}`;
+
+    window.open(googleCalendarURL, '_blank');
+}
     </script>
 </body>
 </html>
