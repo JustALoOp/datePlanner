@@ -197,15 +197,24 @@
         function nextStep(step) {
             const datetime = document.getElementById('datetime').value;
             const activitySelected = document.querySelector('input[name="Aktywność"]:checked');
+            const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value.trim() : '';
 
             if (step === 2 && !datetime) {
                 alert('Proszę wybrać datę.');
                 return;
             }
 
-            if (step === 3 && (!activitySelected || !activitySelected.value.trim())) {
-                alert('Proszę wybrać aktywność.');
-                return;
+            if (step === 3) {
+                if (!activitySelected || !activitySelected.value.trim())) {
+                    alert('Proszę wybrać aktywność.');
+                    return;
+                }
+        
+                // Dodatkowa walidacja dla opcji "Zaproponuj własne"
+                if (activitySelected.value === 'Zaproponuj własne' && !customActivity) {
+                    alert('Proszę wpisać propozycję aktywności.');
+                    return;
+                }
             }
 
             document.querySelectorAll('.step').forEach(stepDiv => {
