@@ -203,7 +203,7 @@
                 return;
             }
 
-            if (step === 3 && (!activitySelected || !activitySelected.value)) {
+            if (step === 3 && (!activitySelected || !activitySelected.value.trim())) {
                 alert('Proszę wybrać aktywność.');
                 return;
             }
