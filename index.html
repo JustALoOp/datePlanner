@@ -264,7 +264,20 @@
                 return;
             }
 
-            const summaryInfo = `Jesteśmy umówieni <b>${datetime}</b> na <b>${finalActivity}</b>.`;
+            // Formatowanie daty
+            const dateObject = new Date(datetime);
+            const formattedDate = dateObject.toLocaleDateString('pl-PL', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+            });
+            const formattedTime = dateObject.toLocaleTimeString('pl-PL', {
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+            const formattedDatetime = `${formattedDate} o godz. ${formattedTime}`;
+        
+            const summaryInfo = `Jesteśmy umówieni <b>${formattedDatetime}</b> na <b>${finalActivity}</b>.`;
 
             document.getElementById('summary-info').innerHTML = summaryInfo;
 
