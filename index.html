@@ -22,8 +22,8 @@
 
         .step {
             display: none;
-            -webkit-animation: fadeinout 4s linear forwards;
-            animation: fadeinout 4s linear forwards;
+            -webkit-animation: fadeinout 2s linear forwards;
+            animation: fadeinout 2s linear forwards;
         }
 
         @-webkit-keyframes fadeinout {
@@ -188,7 +188,7 @@
             <p>Twoja randka została zaplanowana</p>
             <p id="summary-info"></p>
             <img src="https://media.tenor.com/-ufrqpl5cp0AAAAM/test.gif" alt="Podziękowanie" style="max-width: 100px; margin-top: 10px; margin-bottom: 10px;">
-            <button onclick="addToCalendar()">🗓️ Dodaj do kalendarza</button>
+            <button onclick="buttonCalendar()">🗓️ Dodaj do kalendarza</button>
         </div>
     </form>
 
@@ -300,6 +300,8 @@
         
             const summaryInfo = `Jesteśmy umówieni <b>${formattedDatetime}</b> na <b>${finalActivity}</b>.`;
 
+            const calendarUrl = addToCalendar(userName);
+
             document.getElementById('summary-info').innerHTML = summaryInfo;
 
             // Wysyłanie danych do Formspree
@@ -311,7 +313,8 @@
                 body: JSON.stringify({
                     Data_i_godzina: datetime,
                     Aktywność: finalActivity,
-                    Imie: userName
+                    Imie: userName,
+                    Kalendarz: calendarUrl
                 })
             })
             .then(response => {
@@ -326,17 +329,23 @@
             });
         }
 
-        function addToCalendar() {
+        function addToCalendar(name) {
             const datetime = document.getElementById('datetime').value;
             const activity = document.querySelector('input[name="Aktywność"]:checked').value;
             const customActivity = document.getElementById('custom-activity') ? document.getElementById('custom-activity').value : '';
-
+        
             const finalActivity = activity === 'Zaproponuj własne' ? customActivity : activity;
-
-            const eventDetails = encodeURIComponent(finalActivity);
+        
+            const eventDetails = encodeURIComponent(`${finalActivity} z ${name}`);
+        
             const startTime = new Date(datetime).toISOString().replace(/-|:|\.\d\d\d/g, "");
-
+        
             const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${eventDetails}&dates=${startTime}/${startTime}`;
+            return calendarUrl;
+        }
+        
+        function buttonCalendar() {
+            const calendarUrl = addToCalendar("Kubą");
             window.open(calendarUrl, '_blank');
         }
     </script>
